@@ -1,17 +1,24 @@
 
-EXEC=test_uf
+all: build_test build_perf
 
-all: build
+build_test: test.o
+	g++ -L../Quick-Union -luf test.o -o test
 
-build: main.o
-	g++ -L../Quick-Union -luf main.o -o $(EXEC)
+test.o:
+	g++ -c -I../include test.cpp -o test.o
 
-main.o:
-	g++ -c -I../include main.cpp -o main.o
+build_perf: perf.o
+	g++ -L../Quick-Union -luf perf.o -o perf
 
-test: build
-	LD_LIBRARY_PATH=../Quick-Union ./$(EXEC)
+perf.o:
+	g++ -std=c++0x -c -I../include perf.cpp -o perf.o
+
+test: build_test
+	LD_LIBRARY_PATH=../Quick-Union ./test
+
+perf: build_perf
+	LD_LIBRARY_PATH=../Quick-Union ./perf
 
 clean:
-	rm -f *.o $(EXEC)
+	rm -f *.o test perf
 
