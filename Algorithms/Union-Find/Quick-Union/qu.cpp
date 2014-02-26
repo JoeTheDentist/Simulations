@@ -1,7 +1,7 @@
 
 #include <uf.h>
 
-unsigned int root(unsigned int node, unsigned int *array)
+__attribute__ ((visibility ("hidden"))) unsigned int root(unsigned int node, unsigned int *array)
 {
         while (node != array[node])
         {

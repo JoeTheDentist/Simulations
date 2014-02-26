@@ -2,13 +2,13 @@
 all: build_test build_perf
 
 build_test: test.o
-	g++ -L../Quick-Union -luf test.o -o test
+	g++ test.o -L../Quick-Union -luf -o test
 
 test.o:
 	g++ -c -I../include test.cpp -o test.o
 
 build_perf: perf.o
-	g++ -L../Quick-Union -luf perf.o -o perf
+	g++ perf.o -L../Quick-Union -luf -o test -o perf
 
 perf.o:
 	g++ -std=c++0x -c -I../include perf.cpp -o perf.o
