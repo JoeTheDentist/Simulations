@@ -9,6 +9,12 @@ public:
 	UF(unsigned int N);
 
 	/**
+	 * Destructor.
+	 * Clean up.
+	 */
+	~UF();
+
+	/**
 	 * Create the union between p and q.
 	 */
 	void unite(unsigned int p, unsigned int q);
@@ -21,3 +27,4 @@ public:
 private:
 	unsigned int *id;
 };
+

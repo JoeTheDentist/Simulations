@@ -14,3 +14,4 @@ test: build
 
 clean:
 	rm -f *.o $(EXEC)
+
