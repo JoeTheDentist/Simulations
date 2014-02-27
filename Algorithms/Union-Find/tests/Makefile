@@ -1,17 +1,14 @@
 
 all: build_test build_perf
 
-build_test: test.o
-	g++ test.o -L../Quick-Union -luf -o test
+build_test:
+	g++ -I../include test.cpp -L../Quick-Union -luf -o test
 
-test.o:
-	g++ -c -I../include test.cpp -o test.o
+build_perf:
+	g++ -I../include perf.cpp -L../Quick-Union -luf -lncurses -o perf
 
-build_perf: perf.o
-	g++ perf.o -L../Quick-Union -luf -o test -o perf
-
-perf.o:
-	g++ -std=c++0x -c -I../include perf.cpp -o perf.o
+build_perf_p: 
+	g++ -I../include perf.cpp -L../Quick-Union -luf -lncurses -DPAINT -o perf
 
 test: build_test
 	LD_LIBRARY_PATH=../Quick-Union ./test

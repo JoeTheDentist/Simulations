@@ -1,5 +1,8 @@
 
 #include <uf.h>
+#ifdef DEBUG
+	#include <iostream>
+#endif
 
 __attribute__ ((visibility ("hidden"))) unsigned int root(unsigned int node, unsigned int *array)
 {
@@ -10,34 +13,44 @@ __attribute__ ((visibility ("hidden"))) unsigned int root(unsigned int node, uns
         return node;
 }
 
-UF::UF(unsigned int N)
+UF::UF(unsigned int N): _id(new unsigned int[N]), _size(N)
 {
-	id = new unsigned int[N];
 	for (unsigned int i = 0; i<N; ++i)
 	{
-		id[i] = i;
+		_id[i] = i;
 	}
 }
 
 UF::~UF()
 {
-	delete[] id;
+	delete[] _id;
 }
 
 void UF::unite(unsigned int p, unsigned int q)
 {
-	unsigned local_root = root(q, id);
-	id[p] = q;
-	while (p != id[p])
+	#ifdef DEBUG
+        std::cout << "unite " << p << " to " << q << std::endl;
+	#endif
+	unsigned int root_q = root(q, _id);
+	unsigned int root_p = root(p, _id);
+	_id[root_p] = root_q;
+	while (p != _id[p])
 	{
 		unsigned old_p = p;
-		p = id[p];
-		id[old_p] = local_root;
+		p = _id[p];
+		_id[old_p] = root_q;
 	}
+	#ifdef DEBUG
+	for (unsigned int i=0; i<_size; ++i)
+	{
+		std::cout << _id[i] << " ";
+	}
+	std::cout << std::endl;
+	#endif
 }
 
 bool UF::connected(unsigned int p, unsigned int q)
 {
-	return root(p, id) == root(q, id);
+	return root(p, _id) == root(q, _id);
 }
 

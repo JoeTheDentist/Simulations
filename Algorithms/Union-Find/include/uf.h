@@ -25,6 +25,7 @@ public:
 	bool connected(unsigned int p, unsigned int q);
 
 private:
-	unsigned int *id;
+	unsigned int *_id;
+	unsigned int _size;
 };
 
