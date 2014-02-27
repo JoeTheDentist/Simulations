@@ -21,7 +21,7 @@ public:
 	 * Constructor.
 	 * H,W: size of the grid.
 	 */
-	Grid(int H, int W): _H(H), _W(W), _matrix(new cell_t[H*W]), _uf(H*W+2), free_cells(0)
+	Grid(int H, int W): free_cells(0), _H(H), _W(W), _matrix(new cell_t[H*W]), _uf(H*W+2)
 	{
 		for (int i=0; i<H*W; ++i)
 		{
@@ -72,7 +72,7 @@ public:
 			#ifdef PAINT
         	        mvaddch(y, x, ' ');
 	                refresh();
-			usleep(50000);
+			usleep(10000);
                 	#endif
 		}
 	}
@@ -122,7 +122,7 @@ int main()
 {
 	init();
 
-	int exp = 200;
+	int exp = 10000;
 	double av = 0;
 	int N = 200;
 	for (int i=0; i<exp; ++i)
