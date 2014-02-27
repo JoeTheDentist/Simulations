@@ -4,12 +4,28 @@
 
 #include <time.h>
 #include <stdlib.h>
+
+// Visual mode
 #ifdef PAINT
 	#include <unistd.h> // sleep
 	#include <curses.h> // ncurses commands
 	static WINDOW *g_win;
 	static int g_H;
 	static int g_W;
+#endif
+
+// Benchmarking mode
+#ifdef PERF
+	#include <valgrind/callgrind.h>
+	// Requires callgrind --collect-atstart=no option
+	#define CHECK_PERF( x ) \
+		do { \
+			CALLGRIND_TOGGLE_COLLECT; \
+			x; \
+			CALLGRIND_TOGGLE_COLLECT; \
+		} while (0)
+#else
+	#define CHECK_PERF( x ) x
 #endif
 
 class Grid
@@ -57,22 +73,23 @@ public:
 			++free_cells;
 
 			// Check left
-			if (x != 0    && at(x-1,y)) _uf.unite(x+y*_W-1, x+y*_W);
+			if (x != 0    && at(x-1,y)) CHECK_PERF(_uf.unite(x+y*_W-1, x+y*_W));
 			// Check right
-			if (x != _W-1 && at(x+1,y)) _uf.unite(x+y*_W+1, x+y*_W);
+			if (x != _W-1 && at(x+1,y)) CHECK_PERF(_uf.unite(x+y*_W+1, x+y*_W));
 			// Check top
-			if (y != 0    && at(x,y-1)) _uf.unite(x+(y-1)*_W, x+y*_W);
+			if (y != 0    && at(x,y-1)) CHECK_PERF(_uf.unite(x+(y-1)*_W, x+y*_W));
 			// Check bottom
-			if (y != _H-1 && at(x,y+1)) _uf.unite(x+(y+1)*_W, x+y*_W);
+			if (y != _H-1 && at(x,y+1)) CHECK_PERF(_uf.unite(x+(y+1)*_W, x+y*_W));
 			// Check top connection
-			if (y == 0)    _uf.unite(x+y*_W, _W*_H+1);
+			if (y == 0)    CHECK_PERF(_uf.unite(x+y*_W, _W*_H+1));
 			// Check bottom connection
-			if (y == _H-1) _uf.unite(x+y*_W, _W*_H);
+			if (y == _H-1) CHECK_PERF(_uf.unite(x+y*_W, _W*_H));
 
 			#ifdef PAINT
         	        mvaddch(y, x, ' ');
 	                refresh();
-			usleep(10000);
+			// SLEEP defined in Makefile
+			usleep(SLEEP);
                 	#endif
 		}
 	}
@@ -85,7 +102,9 @@ public:
 		// Check the connectivity from the top to the bottom.
 		// Bottom: _H*_W
 		// Top: _H*_W+1
-		return _uf.connected(_H*_W, _H*_W+1);
+		bool res;
+		CHECK_PERF(res = _uf.connected(_W*_H, _W*_H+1));
+		return res;
 	}
 
 	int free_cells;
@@ -122,17 +141,18 @@ int main()
 {
 	init();
 
-	int exp = 10000;
 	double av = 0;
-	int N = 200;
-	for (int i=0; i<exp; ++i)
+	// SAMPLE and BOX defined in Makefile
+	int sample = SAMPLE;
+	int box = BOX;
+	for (int i=0; i<sample; ++i)
 	{
-		Grid g(N,N);
+		Grid g(box,box);
 		while (!g.is_connected())
 		{
-			g.set_free(rand() % N, rand() % N);
+			g.set_free(rand() % box, rand() % box);
 		}
-		av += (double)g.free_cells/(double)(N*N*exp);
+		av += (double)g.free_cells/(double)(box*box*sample);
 	}
 
 	fini();	

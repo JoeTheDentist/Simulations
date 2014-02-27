@@ -1,16 +1,54 @@
 
-DEP_F=../Quick-Union
+# Make usage:
+#     callgrind=[y,N]         prepare the build for callgrind (requires valgrind headers)
+#     paint=[y,N]             prepare the build for visual check (requires lncurses library)
+#     debug=[y,N]             prepare the build in debug mode, useful for investigation
+#     box=[20]                N positive number, size of the simulated boxes (N x N)
+#     sample=[100]            N positive number, number of samples to run
+#     sleep=[100000]          N positive number, time to sleep (micro second) between two screen refresh
+#     module=[../Quick-Union] path to the module that contain libuf.so and its Makefile for the simulation
+#
+# Example: make perf box=10 sample=1 sleep=1000000 paint=y (sleep 1s, between each draw, for a 10x10 box, for a single run).
+
+ifeq ($(callgrind),y)
+	DPERF=-DPERF
+endif
+ifeq ($(paint),y)
+	DPAINT=-DPAINT -lncurses
+endif
+ifeq ($(debug),y)
+	DEBUG=-g
+else
+	DEBUG=-O2
+endif
+ifdef box
+	BOX_DEF=BOX=$(box)
+else
+	BOX_DEF=BOX=20
+endif
+ifdef sample
+	SAMPLE_DEF=SAMPLE=$(sample)
+else
+	SAMPLE_DEF=SAMPLE=100
+endif
+ifdef sleep
+	SLEEP_DEF=SLEEP=$(sleep)
+else
+	SLEEP_DEF=SLEEP=100000
+endif
+ifdef module
+	DEP_F=$(module)
+else
+	DEP_F=../Quick-Union
+endif
 
 all: build_test build_perf
 
 build_test: dep
-	g++ -I../include test.cpp -L$(DEP_F) -luf -o test
+	g++ -I../include test.cpp -L$(DEP_F) $(DEBUG) -luf -o test
 
 build_perf: dep
-	g++ -I../include -Wall perf.cpp -L$(DEP_F) -luf -o perf
-
-build_perf_p: dep
-	g++ -I../include perf.cpp -L$(DEP_F) -luf -lncurses -DPAINT -o perf
+	g++ -I../include -Wall perf.cpp -L$(DEP_F) $(DPERF) $(DPAINT) $(DEBUG) -D$(BOX_DEF) -D$(SAMPLE_DEF) -D$(SLEEP_DEF) -luf -o perf
 
 dep: $(DEP_F)/libuf.so
 
@@ -23,12 +61,12 @@ test: build_test
 perf: build_perf
 	LD_LIBRARY_PATH=$(DEP_F) ./perf
 
-perf_p: build_perf_p
-	LD_LIBRARY_PATH=$(DEP_F) ./perf
+cg:
+	LD_LIBRARY_PATH=$(DEP_F) valgrind --tool=callgrind --collect-atstart=no ./perf
 
 clean:
-	rm -f *.o test perf
+	rm -f *.o callgrind.out.* test perf
 
-full_clean: clean
+cleaaan: clean
 	$(MAKE) -C $(DEP_F) clean
 
