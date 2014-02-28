@@ -1,6 +1,6 @@
 
-LIB_SRC=qu.cpp ../include/private/uf.cpp
-LIB_HEADER=qu.h
+LIB_SRC=dummy.cpp ../include/private/uf.cpp
+LIB_HEADER=dummy.h
 FOLDER=$(shell basename $(shell pwd))
 
 DEFINES=-DLIB_HEADER=\"../../$(FOLDER)/$(LIB_HEADER)\"

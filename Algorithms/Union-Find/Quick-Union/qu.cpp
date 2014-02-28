@@ -1,8 +1,8 @@
 
-#include <uf.h>
 #ifdef DEBUG
 	#include <iostream>
 #endif
+#include "qu.h"
 
 __attribute__ ((visibility ("hidden"))) unsigned int root(unsigned int node, unsigned int *array)
 {
@@ -13,7 +13,7 @@ __attribute__ ((visibility ("hidden"))) unsigned int root(unsigned int node, uns
         return node;
 }
 
-UF::UF(unsigned int N): _id(new unsigned int[N]), _size(N)
+UFImpl::UFImpl(unsigned int N): _id(new unsigned int[N]), _size(N)
 {
 	for (unsigned int i = 0; i<N; ++i)
 	{
@@ -21,12 +21,12 @@ UF::UF(unsigned int N): _id(new unsigned int[N]), _size(N)
 	}
 }
 
-UF::~UF()
+UFImpl::~UFImpl()
 {
 	delete[] _id;
 }
 
-void UF::unite(unsigned int p, unsigned int q)
+void UFImpl::unite(unsigned int p, unsigned int q)
 {
 	#ifdef DEBUG
         std::cout << "unite " << p << " to " << q << std::endl;
@@ -49,7 +49,7 @@ void UF::unite(unsigned int p, unsigned int q)
 	#endif
 }
 
-bool UF::connected(unsigned int p, unsigned int q)
+bool UFImpl::connected(unsigned int p, unsigned int q)
 {
 	return root(p, _id) == root(q, _id);
 }

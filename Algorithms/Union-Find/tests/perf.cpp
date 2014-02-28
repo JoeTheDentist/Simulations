@@ -125,7 +125,9 @@ void init()
         }
 	getmaxyx(g_win, g_H, g_W);
 	#endif
+	#ifdef INIT_SEED
 	srand(time(NULL));
+	#endif
 }
 
 void fini()
@@ -141,22 +143,22 @@ int main()
 {
 	init();
 
-	double av = 0;
+	long unsigned int count = 0;
 	// SAMPLE and BOX defined in Makefile
-	int sample = SAMPLE;
-	int box = BOX;
-	for (int i=0; i<sample; ++i)
+	long unsigned int sample = SAMPLE;
+	long unsigned int box = BOX;
+	for (long unsigned int i=0; i<sample; ++i)
 	{
 		Grid g(box,box);
 		while (!g.is_connected())
 		{
 			g.set_free(rand() % box, rand() % box);
 		}
-		av += (double)g.free_cells/(double)(box*box*sample);
+		count += g.free_cells;
 	}
 
 	fini();	
 
-	std::cout << av << std::endl;
+	std::cout << (long double)count/(long double)(box*box*sample) << std::endl;
 	return EXIT_SUCCESS;
 }
