@@ -1,5 +1,10 @@
 
-class UF
+class UFImpl;
+
+/**
+ * Union Find Algorithm
+ */
+class __attribute__ ((visibility ("default"))) UF
 {
 public:
 	/**
@@ -25,7 +30,7 @@ public:
 	bool connected(unsigned int p, unsigned int q);
 
 private:
-	unsigned int *_id;
-	unsigned int _size;
+	/* pimpl idiom */
+	UFImpl *_impl;
 };
 

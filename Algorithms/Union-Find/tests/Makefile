@@ -2,7 +2,7 @@
 # Make usage
 # For all:
 #     debug=[y,N]             prepare the build in debug mode, useful for investigation
-#     module=[../Quick-Union] path to the module that contain libuf.so and its Makefile for the simulation
+#     module=[Quick-Union]    path to the module that contain libuf.so and its Makefile for the simulation (directory name in ..)
 #
 # For perf:
 #     callgrind=[y,N]         prepare the build for callgrind (requires valgrind headers)
@@ -46,7 +46,7 @@ else
 	SLEEP_DEF=SLEEP=100000
 endif
 ifdef module
-	DEP_F=$(module)
+	DEP_F=../$(module)
 else
 	DEP_F=../Quick-Union
 endif
