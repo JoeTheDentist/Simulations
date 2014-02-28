@@ -10,6 +10,7 @@
 #     box=[20]                N positive number, size of the simulated boxes (N x N)
 #     sample=[100]            N positive number, number of samples to run
 #     sleep=[100000] (0.1s)   N positive number, time to sleep (micro second) between two screen refresh (only useful with paint option)
+#     compare=[y,N]           do not initialize the random generator to reproduce a comparable behavior (useful for callgrind instruction count)
 #
 # Example: make perf box=10 sample=1 sleep=1000000 paint=y (sleep 1s, between each draw, for a 10x10 box, for a single run).
 #
@@ -52,6 +53,9 @@ endif
 ifeq ($(gtest),y)
         GTEST=-DGTEST -lgtest -pthread
 endif
+ifneq ($(compare), y)
+	COMPARE=-DINIT_SEED
+endif
 
 all: build_test build_perf
 
@@ -59,7 +63,7 @@ build_test: dep
 	g++ -I../include test.cpp -L$(DEP_F) $(DEBUG) $(GTEST) -luf -o test
 
 build_perf: dep
-	g++ -I../include -Wall perf.cpp -L$(DEP_F) $(DPERF) $(DPAINT) $(DEBUG) -D$(BOX_DEF) -D$(SAMPLE_DEF) -D$(SLEEP_DEF) -luf -o perf
+	g++ -I../include -Wall perf.cpp -L$(DEP_F) $(DPERF) $(DPAINT) $(DEBUG) $(COMPARE) -D$(BOX_DEF) -D$(SAMPLE_DEF) -D$(SLEEP_DEF) -luf -o perf
 
 dep: $(DEP_F)/libuf.so
 
