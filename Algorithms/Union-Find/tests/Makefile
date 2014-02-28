@@ -6,15 +6,15 @@
 #
 # For perf:
 #     callgrind=[y,N]         prepare the build for callgrind (requires valgrind headers)
-#     paint=[y,N]             prepare the build for visual check (requires lncurses library)
+#     paint=[y,N]             prepare the build for visual check (requires lncurses devel installed)
 #     box=[20]                N positive number, size of the simulated boxes (N x N)
 #     sample=[100]            N positive number, number of samples to run
-#     sleep=[100000]          N positive number, time to sleep (micro second) between two screen refresh
+#     sleep=[100000] (0.1s)   N positive number, time to sleep (micro second) between two screen refresh (only useful with paint option)
 #
 # Example: make perf box=10 sample=1 sleep=1000000 paint=y (sleep 1s, between each draw, for a 10x10 box, for a single run).
 #
 # For test:
-#     gtest=[Y,n] use google c++ test framework (requires gtest installed).
+#     gtest=[y,N]             use google c++ test framework (requires gtest installed).
 #
 # Example: make test gtest=n (run the tests, without gtest).
 
@@ -49,7 +49,7 @@ ifdef module
 else
 	DEP_F=../Quick-Union
 endif
-ifneq ($(gtest),n)
+ifeq ($(gtest),y)
         GTEST=-DGTEST -lgtest -pthread
 endif
 
