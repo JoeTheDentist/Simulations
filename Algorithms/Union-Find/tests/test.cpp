@@ -19,7 +19,8 @@ void basic_test()
 }
 
 #ifdef GTEST
-TEST(UnionFindTest, General) {
+TEST(UnionFindTest, Blocks)
+{
 	unsigned int full_size = 200;
 	UF test(full_size);
 	EXPECT_FALSE(test.connected(0, full_size/2-1));
@@ -36,6 +37,20 @@ TEST(UnionFindTest, General) {
         }
 	EXPECT_TRUE(test.connected(0, full_size/2-1));
         EXPECT_TRUE(test.connected(0, full_size-1));
+}
+
+TEST(UnionFindTest, Holes)
+{
+	unsigned int half_size =100;
+	unsigned int full_size = 2*half_size;
+        UF test(full_size);
+        for (unsigned int i=0; i<full_size-1; i+=2)
+        {
+                test.unite(i,i+2);
+        }
+        EXPECT_TRUE(test.connected(0, 2));
+        EXPECT_TRUE(test.connected(0, 4));
+	EXPECT_TRUE(test.connected(0, full_size-2));
 }
 
 void gtest_test()
