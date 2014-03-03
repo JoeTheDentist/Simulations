@@ -8,6 +8,7 @@ public:
         bool connected(unsigned int p, unsigned int q);
 
 private:
+	unsigned int _root(unsigned int root);
         unsigned int *_id;
         unsigned int _size;
 };

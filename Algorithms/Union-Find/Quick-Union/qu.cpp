@@ -4,15 +4,6 @@
 #endif
 #include "qu.h"
 
-__attribute__ ((visibility ("hidden"))) unsigned int root(unsigned int node, unsigned int *array)
-{
-        while (node != array[node])
-        {
-                node = array[node];
-        }
-        return node;
-}
-
 UFImpl::UFImpl(unsigned int N): _id(new unsigned int[N]), _size(N)
 {
 	for (unsigned int i = 0; i<N; ++i)
@@ -31,8 +22,8 @@ void UFImpl::unite(unsigned int p, unsigned int q)
 	#ifdef DEBUG
         std::cout << "unite " << p << " to " << q << std::endl;
 	#endif
-	unsigned int root_q = root(q, _id);
-	unsigned int root_p = root(p, _id);
+	unsigned int root_q = _root(q);
+	unsigned int root_p = _root(p);
 	_id[root_p] = root_q;
 	while (p != _id[p])
 	{
@@ -51,6 +42,15 @@ void UFImpl::unite(unsigned int p, unsigned int q)
 
 bool UFImpl::connected(unsigned int p, unsigned int q)
 {
-	return root(p, _id) == root(q, _id);
+	return _root(p) == _root(q);
+}
+
+unsigned int UFImpl::_root(unsigned int node)
+{
+        while (node != _id[node])
+        {
+                node = _id[node];
+        }
+        return node;
 }
 
